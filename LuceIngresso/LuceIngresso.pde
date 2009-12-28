@@ -79,14 +79,14 @@ void loop() {
   
   iBut = digitalRead( BUTTON );
   
-  if( DEBUG ) {
+  #if DEBUG>0
     sprintf( sVal, "%u", time);
     toSerial( "Tempo: ", false);
     toSerial( sVal, false);
     toSerial( " Bottone: ", false);
     sprintf( sVal, "%i", iBut);
     toSerial( sVal, true);
-  }
+  #endif
   
   if( ( iBut == HIGH ) && ( iBut1 == LOW ) ) {
     state = 1 - state;
@@ -112,7 +112,7 @@ void loop() {
   // altrimenti lo resetto se supera SECRESET
   if( ( time < (DELAY/1000*2) ) || ( (time - iLastRead) > SECRESET ) ) {
     
-    if( DEBUG ) {
+    #if DEBUG>0
       toSerial( "Eseguo il reset del contatore... iVal1': " , false);
       sprintf( sVal, "%i", iVal1 );
       toSerial( sVal, false);
@@ -128,7 +128,7 @@ void loop() {
       toSerial( " Al secondo: ", false );
       sprintf( sVal, "%u", time );
       toSerial( sVal, true);
-    } 
+    #endif
     
     iLastRead = time;
     iVal2 = iVal1;
