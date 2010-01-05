@@ -35,11 +35,12 @@
  *       :o_o:
  *        "-"
  */
- 
+
+//al momento stdio.h non e' utilizzato e il compilatore non lo include
 #include <stdio.h>
 
 //se impostata ad 1 logga sulla seriale alcune informazioni
-#define DEBUG 2
+#define DEBUG 1
 
 #define SENSORLUM 0 //fotoresistore
 #define BUTTON 12
@@ -142,15 +143,6 @@ unsigned int lum;
 
 unsigned long iLastRead = 0;
 
-void toSerial( char sLog[ ], boolean bLineNew = false ) {
-
-  Serial.print( sLog );
-
-  if( bLineNew == true ) {
-    Serial.println( "" );
-  }
-}
-
 void setup() {
   Serial.begin(9600);  // open the serial port
   pinMode( BUZZ, OUTPUT );
@@ -192,9 +184,8 @@ void loop() {
   }
 
   #if DEBUG>0
-    toSerial( " Stato: ", false );
-    sprintf( sVal, "%i", state);
-    toSerial( sVal, true);
+    Serial.print( " Stato: " );
+    Serial.println( state );
   #endif
 
   if( ( iBut == HIGH ) && ( iBut1 == HIGH ) ) {
@@ -202,10 +193,9 @@ void loop() {
     if( state == 1){
       if( millis() - lButStartTime > SECBUTTON*4 ) {
         #if DEBUG>0
-          toSerial( "Bottone premuto piu' di ", false);
-          sprintf( sVal, "%i", SECBUTTON*4);
-          toSerial( sVal, false);
-          toSerial( "ms", true );
+          Serial.print( "Bottone premuto piu' di " );
+          Serial.print( SECBUTTON*4 );
+          Serial.println( "ms" );
         #endif
         //immettere qui il codice per richiamare un colore
         toWhite();
@@ -215,10 +205,9 @@ void loop() {
       } 
       else if( millis() - lButStartTime > SECBUTTON*3 ) {
         #if DEBUG>0
-          toSerial( "Bottone premuto piu' di ", false);
-          sprintf( sVal, "%i", SECBUTTON*3);
-          toSerial( sVal, false);
-          toSerial( "ms", true );
+          Serial.print( "Bottone premuto piu' di " );
+          Serial.print( SECBUTTON*3 );
+          Serial.println( "ms" );
         #endif
         //immettere qui il codice per richiamare un colore
         toBlack();
@@ -228,10 +217,9 @@ void loop() {
       } 
       else if( millis() - lButStartTime > SECBUTTON*2 ) {
         #if DEBUG>0
-          toSerial( "Bottone premuto piu' di ", false);
-          sprintf( sVal, "%i", SECBUTTON*2);
-          toSerial( sVal, false);
-          toSerial( "ms", true );
+          Serial.print( "Bottone premuto piu' di " );
+          Serial.print( SECBUTTON*2 );
+          Serial.println( "ms" );
         #endif
         //immettere qui il codice per richiamare un colore
         toRed();
@@ -241,10 +229,9 @@ void loop() {
       } 
       else if( millis() - lButStartTime > SECBUTTON ) {
         #if DEBUG>0
-          toSerial( "Bottone premuto piu' di ", false);
-          sprintf( sVal, "%i", SECBUTTON);
-          toSerial( sVal, false);
-          toSerial( "ms", true );
+          Serial.print( "Bottone premuto piu' di " );
+          Serial.print( SECBUTTON );
+          Serial.println( "ms" );
         #endif
         //immettere qui il codice per richiamare un colore
         toGreen();
@@ -265,9 +252,8 @@ void loop() {
     iDistance = analogRead(SENSORIR);
 
     #if DEBUG>1
-      toSerial( "Distanza rilevata: ", false );
-      sprintf( sVal, "%i", iDistance);
-      toSerial( sVal, true);
+      Serial.print( "Distanza rilevata: " );
+      Serial.println( iDistance );
     #endif
 
     if( (iDistance > MAXDISTANCE) || ( iDistance < MINDISTANCE ) ) {
@@ -306,7 +292,7 @@ void loop() {
             bHigh = false;
             
             #if DEBUG>0
-              toSerial( "Passato il tempo massimo... spengo tutto", true );
+              Serial.println( "Passato il tempo massimo... spengo tutto" );
             #endif
           }
           
@@ -315,7 +301,7 @@ void loop() {
             bHigh = false;
             
             #if DEBUG>0
-              toSerial( "E' stato premuto il bottore... spengo tutto", true );
+              Serial.println( "E' stato premuto il bottore... spengo tutto" );
             #endif
           }
           
@@ -339,21 +325,16 @@ void loop() {
   if( ( time < (DELAY/1000*2) ) || ( (time - iLastRead) > SECRESET ) ) {
 
     #if DEBUG>0
-      toSerial( "Eseguo il reset del contatore... iVal1': " , false);
-      sprintf( sVal, "%i", iVal1 );
-      toSerial( sVal, false);
-      toSerial( " Al secondo: ", false);
-      sprintf( sVal, "%u", iLastRead );
-      toSerial( sVal, false);
-      toSerial( " iVal2: ", false );
-      sprintf( sVal, "%i", iVal2 );
-      toSerial( sVal, true);
-      toSerial( "Nuovo valore di luminosita': ", false );
-      sprintf( sVal, "%i", iVal );
-      toSerial( sVal, false);
-      toSerial( " Al secondo: ", false );
-      sprintf( sVal, "%u", time );
-      toSerial( sVal, true);
+      Serial.print( "Eseguo il reset del contatore... iVal1': " );
+      Serial.print( iVal1 );
+      Serial.print( " Al secondo: " );
+      Serial.print( iLastRead );
+      Serial.print( " iVal2: " );
+      Serial.println( iVal2 );
+      Serial.print( "Nuovo valore di luminosita': " );
+      Serial.print( iVal );
+      Serial.print( " Al secondo: " );
+      Serial.println( time );
     #endif
 
     iLastRead = time;
@@ -366,7 +347,7 @@ void loop() {
   //ad esempio se state == 1 allora DELAY = DELAY / X
   delay(DELAY);
 
-}
+}//end loop
 
 void toWhite(){
   //accende tutti i led -> bianco
