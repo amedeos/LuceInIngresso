@@ -61,8 +61,8 @@
 #if DEBUG>0
   #undef MAXDISTANCE
   #undef MINDISTANCE
-  #define MAXDISTANCE 200  //da tarare
-  #define MINDISTANCE 0  //da tarare
+  #define MAXDISTANCE 200
+  #define MINDISTANCE 0
 #endif
 
 //quanti minuti lasciare accesi i led 
@@ -162,7 +162,7 @@ void loop() {
     delay(DEBOUNCING);
 
     if( state ==1 ){
-      toBlue();
+      toWhite();
     }
   }
 
@@ -174,17 +174,85 @@ void loop() {
   if( ( iBut == HIGH ) && ( iBut1 == HIGH ) ) {
 
     if( state == 1){
-      if( millis() - lButStartTime > SECBUTTON*4 ) {
+      if( millis() - lButStartTime > SECBUTTON*11 ) {
+        #if DEBUG>0
+          Serial.print( "Bottone premuto piu' di " );
+          Serial.print( SECBUTTON*11 );
+          Serial.println( "ms" );
+        #endif
+        //immettere qui il codice per richiamare un colore
+        toPurple();
+        buzzer();
+      }
+      else if( millis() - lButStartTime > SECBUTTON*10 ) {
+        #if DEBUG>0
+          Serial.print( "Bottone premuto piu' di " );
+          Serial.print( SECBUTTON*10 );
+          Serial.println( "ms" );
+        #endif
+        //immettere qui il codice per richiamare un colore
+        toOlive();
+        buzzer();
+      }
+      else if( millis() - lButStartTime > SECBUTTON*9 ) {
+        #if DEBUG>0
+          Serial.print( "Bottone premuto piu' di " );
+          Serial.print( SECBUTTON*9 );
+          Serial.println( "ms" );
+        #endif
+        //immettere qui il codice per richiamare un colore
+        toOrange();
+        buzzer();
+      }
+      else if( millis() - lButStartTime > SECBUTTON*8 ) {
+        #if DEBUG>0
+          Serial.print( "Bottone premuto piu' di " );
+          Serial.print( SECBUTTON*8 );
+          Serial.println( "ms" );
+        #endif
+        //immettere qui il codice per richiamare un colore
+        toTeal();
+        buzzer();
+      }
+      else if( millis() - lButStartTime > SECBUTTON*7 ) {
+        #if DEBUG>0
+          Serial.print( "Bottone premuto piu' di " );
+          Serial.print( SECBUTTON*7 );
+          Serial.println( "ms" );
+        #endif
+        //immettere qui il codice per richiamare un colore
+        toGray();
+        buzzer();
+      }
+      else if( millis() - lButStartTime > SECBUTTON*6 ) {
+        #if DEBUG>0
+          Serial.print( "Bottone premuto piu' di " );
+          Serial.print( SECBUTTON*6 );
+          Serial.println( "ms" );
+        #endif
+        //immettere qui il codice per richiamare un colore
+        toCyan();
+        buzzer();
+      }
+      else if( millis() - lButStartTime > SECBUTTON*5 ) {
+        #if DEBUG>0
+          Serial.print( "Bottone premuto piu' di " );
+          Serial.print( SECBUTTON*5 );
+          Serial.println( "ms" );
+        #endif
+        //immettere qui il codice per richiamare un colore
+        toMagenta();
+        buzzer();
+      }
+      else if( millis() - lButStartTime > SECBUTTON*4 ) {
         #if DEBUG>0
           Serial.print( "Bottone premuto piu' di " );
           Serial.print( SECBUTTON*4 );
           Serial.println( "ms" );
         #endif
         //immettere qui il codice per richiamare un colore
-        toWhite();
-        for( i = 0; i < SECBUTTON/50; i++) {
-          buzzer();
-        }
+        toYellow();
+        buzzer();
       } 
       else if( millis() - lButStartTime > SECBUTTON*3 ) {
         #if DEBUG>0
@@ -193,10 +261,8 @@ void loop() {
           Serial.println( "ms" );
         #endif
         //immettere qui il codice per richiamare un colore
-        toBlack();
-        for( i = 0; i < SECBUTTON/50; i++) {
-          buzzer();
-        }
+        toBlue();
+        buzzer();
       } 
       else if( millis() - lButStartTime > SECBUTTON*2 ) {
         #if DEBUG>0
@@ -205,10 +271,8 @@ void loop() {
           Serial.println( "ms" );
         #endif
         //immettere qui il codice per richiamare un colore
-        toRed();
-        for( i = 0; i < SECBUTTON/50; i++) {
-          buzzer();
-        }
+        toGreen();
+        buzzer();
       } 
       else if( millis() - lButStartTime > SECBUTTON ) {
         #if DEBUG>0
@@ -217,10 +281,8 @@ void loop() {
           Serial.println( "ms" );
         #endif
         //immettere qui il codice per richiamare un colore
-        toGreen();
-        for( i = 0; i < SECBUTTON/50; i++) {
-          buzzer();
-        }        
+        toRed();
+        buzzer();
       }
     } //end if state == 1
   } //end if ( iBut == HIGH ) && ( iBut1 == HIGH )
@@ -251,20 +313,56 @@ void loop() {
         }
 
         //selezioniamo un colore a caso
-        i = lDoorStartTime % 4;
+        i = lDoorStartTime % 12;
         switch (i) {
         case 0:
-          toBlue();
+          toWhite();
+          Serial.println( "Bianco!" );
           break;
         case 1:
-          toGreen();
+          toRed();
+          Serial.println( "Rosso!" );
           break;
         case 2:
-          toRed();
+          toGreen();
+          Serial.println( "Verde!" );
           break;
         case 3:
-          toWhite();
-          break; 
+          toBlue();
+          Serial.println( "Blu!" );
+          break;
+        case 4:
+          toYellow();
+          Serial.println( "Giallo!" );
+          break;
+        case 5:
+          toMagenta();
+          Serial.println( "Magenta!" );
+          break;
+        case 6:
+          toCyan();
+          Serial.println( "Ciano!" );
+          break;
+        case 7:
+          toGray();
+          Serial.println( "Grigio!" );
+          break;
+        case 8:
+          toTeal();
+          Serial.println( "Teal!" );
+          break;
+        case 9:
+          toOrange();
+          Serial.println( "Arancione!" );
+          break;
+        case 10:
+          toOlive();
+          Serial.println( "Oliva!" );
+          break;
+        case 11:
+          toPurple();
+          Serial.println( "Porpora!" );
+          break;
         }
         
         int iButTmp = 0;
