@@ -7,7 +7,7 @@
  * Semplice programma utilizzato per accendere la luce dell'ingresso
  * all'apertura della porta e con luminosita' ridotta
  *
- * Versione: 0.0.3
+ * Versione: 0.0.4
  */
  
 /* This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@
 #include <stdio.h>
 
 //se impostata ad 1 logga sulla seriale alcune informazioni
-#define DEBUG 1
+#define DEBUG 2
 
 #define SENSORLUM 0 //fotoresistore
 #define BUTTON 12
@@ -149,6 +149,8 @@ void setup() {
   pinMode( GLED, OUTPUT );
   pinMode( RLED, OUTPUT );
   pinMode( BLED, OUTPUT );
+  
+  randomSeed( analogRead( 1 ) );  //inizializzo il seme dei num casuali con la lettura da un pin non utilizzato
 }
 
 void loop() {
@@ -330,7 +332,7 @@ void loop() {
         }
 
         //selezioniamo un colore a caso
-        i = lDoorStartTime % 12;
+        i = random( 12 );
         switch (i) {
         case 0:
           toWhite();
