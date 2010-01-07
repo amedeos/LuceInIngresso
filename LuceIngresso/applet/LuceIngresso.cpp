@@ -44,7 +44,7 @@
 
 #define SENSORLUM 0 //fotoresistore
 #define BUTTON 12
-#define BUZZ 3
+#define BUZZ 9
 #define SENSORIR 5 //sensore IR sulla porta
 #define DELAY 100 //delay immesso alla fine del ciclo loop
 #define DEBOUNCING 30 //delay immesso per il de-bouncing del bottone
@@ -71,11 +71,6 @@
 #define RLED 6
 #define GLED 5
 #define BLED 3
-
-//potenziometri per i colori
-#define RPOT 2
-#define GPOT 3
-#define YPOT 4
 
 #if DEBUG>0
   #undef DELAY
