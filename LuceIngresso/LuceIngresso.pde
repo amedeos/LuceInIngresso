@@ -40,7 +40,7 @@
 #include <stdio.h>
 
 //se impostata ad 1 logga sulla seriale alcune informazioni
-#define DEBUG 1
+#define DEBUG 0
 
 #define SENSORLUM 0 //fotoresistore
 #define BUTTON 12
@@ -52,7 +52,7 @@
 #define SECBUTTON 2000 //ogni quanti millisecondi premendo il bottone si cambiera' colore
 
 //variabile che definisce la luminosita' minima
-#define MINLUM 70
+#define MINLUM 50
 
 //variabile che definisce la distanza massima e minima
 #define MAXDISTANCE 450  //da tarare
@@ -110,6 +110,9 @@ void toPurple();
 void buzzer();
 void buzzer( int *num, int *nDelay );
 
+//funzione utilizzata per variare il colore
+void changeColor( int *red, int *green, int *blue );
+
 int iVal = 0; // variable to store the value coming from the sensor
 int iVal1 = 0; //variabile che memorizza il valore di iVal SECRESET prima
 int iVal2 = 0; //variabile che memorizza il valore di iVal SECRESET*2 prima
@@ -140,6 +143,9 @@ unsigned long iLastRead = 0;
 int iColor = 0;
 int iColor1 =0;
 
+int iRed = 0;
+int iGreen = 0;
+int iBlue = 0;
 
 void setup() {
   Serial.begin(9600);  // open the serial port
@@ -369,51 +375,75 @@ void loop() {
         switch (i) {
         case 0:
           toWhite();
-          Serial.println( "Bianco!" );
+          #if DEBUG>0
+            Serial.println( "Bianco!" );
+          #endif
           break;
         case 1:
           toRed();
-          Serial.println( "Rosso!" );
+          #if DEBUG>0
+            Serial.println( "Rosso!" );
+          #endif
           break;
         case 2:
           toGreen();
-          Serial.println( "Verde!" );
+          #if DEBUG>0
+            Serial.println( "Verde!" );
+          #endif
           break;
         case 3:
           toBlue();
-          Serial.println( "Blu!" );
+          #if DEBUG>0
+            Serial.println( "Blu!" );
+          #endif
           break;
         case 4:
           toYellow();
-          Serial.println( "Giallo!" );
+          #if DEBUG>0
+            Serial.println( "Giallo!" );
+          #endif
           break;
         case 5:
           toMagenta();
-          Serial.println( "Magenta!" );
+          #if DEBUG>0
+            Serial.println( "Magenta!" );
+          #endif
           break;
         case 6:
           toCyan();
-          Serial.println( "Ciano!" );
+          #if DEBUG>0
+            Serial.println( "Ciano!" );
+          #endif
           break;
         case 7:
           toGray();
-          Serial.println( "Grigio!" );
+          #if DEBUG>0
+            Serial.println( "Grigio!" );
+          #endif
           break;
         case 8:
           toTeal();
-          Serial.println( "Teal!" );
+          #if DEBUG>0
+            Serial.println( "Teal!" );
+          #endif
           break;
         case 9:
           toOrange();
-          Serial.println( "Arancione!" );
+          #if DEBUG>0
+            Serial.println( "Arancione!" );
+          #endif
           break;
         case 10:
           toOlive();
-          Serial.println( "Oliva!" );
+          #if DEBUG>0
+            Serial.println( "Oliva!" );
+          #endif
           break;
         case 11:
           toPurple();
-          Serial.println( "Porpora!" );
+          #if DEBUG>0
+            Serial.println( "Porpora!" );
+          #endif
           break;
         }
         
@@ -482,9 +512,17 @@ void loop() {
 
 void toWhite(){
   //accende tutti i led -> bianco
+  /*
   analogWrite(RLED, 255);
   analogWrite(GLED, 255);
   analogWrite(BLED, 255);
+  */
+  
+  iRed = 255;
+  iGreen = 255;
+  iBlue = 255; 
+  
+  changeColor( &iRed, &iGreen, &iBlue );
   
   iColor = IWHITE;
   
@@ -496,9 +534,11 @@ void toWhite(){
 
 void toBlack(){
   //spegne tutti i led -> nero
-  analogWrite(RLED, 0);
-  analogWrite(GLED, 0);
-  analogWrite(BLED, 0);
+  iRed = 0;
+  iGreen = 0;
+  iBlue = 0;
+  
+  changeColor( &iRed, &iGreen, &iBlue );
   
   iColor = IBLACK;
   
@@ -510,9 +550,11 @@ void toBlack(){
 
 void toRed(){
   //colora di rosso il tutto
-  analogWrite(RLED, 255);
-  analogWrite(GLED, 0);
-  analogWrite(BLED, 0);
+  iRed = 255;
+  iGreen = 0;
+  iBlue = 0;
+  
+  changeColor( &iRed, &iGreen, &iBlue );
   
   iColor = IRED;
   
@@ -524,9 +566,11 @@ void toRed(){
 
 void toGreen(){
   //colora di verde il tutto
-  analogWrite(RLED, 0);
-  analogWrite(GLED, 255);
-  analogWrite(BLED, 0);
+  iRed = 0;
+  iGreen = 255;
+  iBlue = 0;
+  
+  changeColor( &iRed, &iGreen, &iBlue );
   
   iColor = IGREEN;
   
@@ -538,10 +582,12 @@ void toGreen(){
 
 void toBlue(){
   //colora di blu il tutto
-  analogWrite(RLED, 0);
-  analogWrite(GLED, 0);
-  analogWrite(BLED, 255);
+  iRed = 0;
+  iGreen = 0;
+  iBlue = 255;
   
+  changeColor( &iRed, &iGreen, &iBlue );
+
   iColor = IBLUE;
   
   #if DEBUG>1
@@ -552,9 +598,11 @@ void toBlue(){
 
 void toYellow(){
   //colora di giallo il tutto
-  analogWrite(RLED, 255);
-  analogWrite(GLED, 255);
-  analogWrite(BLED, 0);
+  iRed = 255;
+  iGreen = 255;
+  iBlue = 0;
+  
+  changeColor( &iRed, &iGreen, &iBlue );
   
   iColor = IYELLOW;
   
@@ -566,9 +614,11 @@ void toYellow(){
 
 void toMagenta(){
   //colora di magenta il tutto
-  analogWrite(RLED, 255);
-  analogWrite(GLED, 0);
-  analogWrite(BLED, 255);
+  iRed = 255;
+  iGreen = 0;
+  iBlue = 255;
+  
+  changeColor( &iRed, &iGreen, &iBlue );
   
   iColor = IMAGENTA;
   
@@ -580,9 +630,11 @@ void toMagenta(){
 
 void toCyan(){
   //colora di ciano il tutto
-  analogWrite(RLED, 0);
-  analogWrite(GLED, 255);
-  analogWrite(BLED, 255);
+  iRed = 0;
+  iGreen = 255;
+  iBlue = 255;
+  
+  changeColor( &iRed, &iGreen, &iBlue );
   
   iColor = ICYAN;
   
@@ -594,9 +646,11 @@ void toCyan(){
 
 void toGray(){
   //colora di grigio il tutto
-  analogWrite(RLED, 128);
-  analogWrite(GLED, 128);
-  analogWrite(BLED, 128);
+  iRed = 128;
+  iGreen = 128;
+  iBlue = 128;
+  
+  changeColor( &iRed, &iGreen, &iBlue );
   
   iColor = IGRAY;
   
@@ -608,9 +662,11 @@ void toGray(){
 
 void toTeal(){
   //colora di foglia di te' il tutto
-  analogWrite(RLED, 0);
-  analogWrite(GLED, 128);
-  analogWrite(BLED, 128);
+  iRed = 0;
+  iGreen = 128;
+  iBlue = 128;
+  
+  changeColor( &iRed, &iGreen, &iBlue );
   
   iColor = ITEAL;
   
@@ -622,9 +678,11 @@ void toTeal(){
 
 void toOrange(){
   //colora di arancione il tutto
-  analogWrite(RLED, 255);
-  analogWrite(GLED, 127);
-  analogWrite(BLED, 0);
+  iRed = 255;
+  iGreen = 127;
+  iBlue = 0;
+  
+  changeColor( &iRed, &iGreen, &iBlue );
   
   iColor = IORANGE;
   
@@ -636,9 +694,11 @@ void toOrange(){
 
 void toOlive(){
   //colora di marrone oliva il tutto
-  analogWrite(RLED, 128);
-  analogWrite(GLED, 128);
-  analogWrite(BLED, 0);
+  iRed = 128;
+  iGreen = 128;
+  iBlue = 0;
+  
+  changeColor( &iRed, &iGreen, &iBlue );
   
   iColor = IOLIVE;
   
@@ -650,9 +710,11 @@ void toOlive(){
 
 void toPurple(){
   //colora di porpora il tutto
-  analogWrite(RLED, 128);
-  analogWrite(GLED, 0);
-  analogWrite(BLED, 128);
+  iRed = 128;
+  iGreen = 0;
+  iBlue = 128;
+  
+  changeColor( &iRed, &iGreen, &iBlue );
   
   iColor = IPURPLE;
   
@@ -662,8 +724,14 @@ void toPurple(){
   #endif
 }
 
+void changeColor( int *red, int *green, int *blue ){
+  analogWrite(RLED, *red);
+  analogWrite(GLED, *green);
+  analogWrite(BLED, *blue);
+}
+
 void buzzer() {
-  //di default ciclo di 3 con delay di 10
+  //di default ciclo di 10 con delay di 10
   #if DEBUG>0
     Serial.println( "Segnalazione del cambio di stato tramite buzzer (default)" );
   #endif 
