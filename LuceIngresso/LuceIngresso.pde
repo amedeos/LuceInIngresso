@@ -7,7 +7,7 @@
  * Semplice programma utilizzato per accendere la luce dell'ingresso
  * all'apertura della porta e con luminosita' ridotta
  *
- * Versione: 0.0.4
+ * Versione: 0.0.5
  */
  
 /* This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@
 #include <stdio.h>
 
 //se impostata ad 1 logga sulla seriale alcune informazioni
-#define DEBUG 2
+#define DEBUG 1
 
 #define SENSORLUM 0 //fotoresistore
 #define BUTTON 12
@@ -72,6 +72,20 @@
 #define GLED 5
 #define BLED 3
 
+#define IBLACK 0
+#define IWHITE 1
+#define IRED 2
+#define IGREEN 3
+#define IBLUE 4
+#define IYELLOW 5
+#define IMAGENTA 6
+#define ICYAN 7
+#define IGRAY 8
+#define ITEAL 9
+#define IORANGE 10
+#define IOLIVE 11
+#define IPURPLE 12
+
 #if DEBUG>0
   #undef DELAY
   #define DELAY 300
@@ -92,8 +106,9 @@ void toOrange();
 void toOlive();
 void toPurple();
 
-//semplice funzione utilizzata per segnalare un cambiamento
+//funzioni utilizzate per segnalare acusticamente un cambiamento
 void buzzer();
+void buzzer( int *num, int *nDelay );
 
 int iVal = 0; // variable to store the value coming from the sensor
 int iVal1 = 0; //variabile che memorizza il valore di iVal SECRESET prima
@@ -121,6 +136,11 @@ unsigned int lum;
 
 unsigned long iLastRead = 0;
 
+//variabile utilizzata per sapere quale colore precedentemente era acceso
+int iColor = 0;
+int iColor1 =0;
+
+
 void setup() {
   Serial.begin(9600);  // open the serial port
   pinMode( BUZZ, OUTPUT );
@@ -139,10 +159,8 @@ void loop() {
   //conversione in secondi
   time = time / 1000;
 
-  char sVal[ 20 ];
-
   iBut = digitalRead( BUTTON );
-
+  
   #if DEBUG>0
     Serial.print( "Tempo: " );
     Serial.print( time );
@@ -160,6 +178,10 @@ void loop() {
 
     if( state ==1 ){
       toWhite();
+      if( iColor1 != iColor ){
+        buzzer();
+        iColor1 = iColor;
+      }
     }
   }
 
@@ -179,7 +201,10 @@ void loop() {
         #endif
         //immettere qui il codice per richiamare un colore
         toPurple();
-        buzzer();
+        if( iColor1 != iColor ){
+          buzzer();
+          iColor1 = iColor;
+        }
       }
       else if( millis() - lButStartTime > SECBUTTON*10 ) {
         #if DEBUG>0
@@ -189,7 +214,10 @@ void loop() {
         #endif
         //immettere qui il codice per richiamare un colore
         toOlive();
-        buzzer();
+        if( iColor1 != iColor ){
+          buzzer();
+          iColor1 = iColor;
+        }
       }
       else if( millis() - lButStartTime > SECBUTTON*9 ) {
         #if DEBUG>0
@@ -199,7 +227,10 @@ void loop() {
         #endif
         //immettere qui il codice per richiamare un colore
         toOrange();
-        buzzer();
+        if( iColor1 != iColor ){
+          buzzer();
+          iColor1 = iColor;
+        }
       }
       else if( millis() - lButStartTime > SECBUTTON*8 ) {
         #if DEBUG>0
@@ -209,7 +240,10 @@ void loop() {
         #endif
         //immettere qui il codice per richiamare un colore
         toTeal();
-        buzzer();
+        if( iColor1 != iColor ){
+          buzzer();
+          iColor1 = iColor;
+        }
       }
       else if( millis() - lButStartTime > SECBUTTON*7 ) {
         #if DEBUG>0
@@ -219,7 +253,10 @@ void loop() {
         #endif
         //immettere qui il codice per richiamare un colore
         toGray();
-        buzzer();
+        if( iColor1 != iColor ){
+          buzzer();
+          iColor1 = iColor;
+        }
       }
       else if( millis() - lButStartTime > SECBUTTON*6 ) {
         #if DEBUG>0
@@ -229,7 +266,10 @@ void loop() {
         #endif
         //immettere qui il codice per richiamare un colore
         toCyan();
-        buzzer();
+        if( iColor1 != iColor ){
+          buzzer();
+          iColor1 = iColor;
+        }
       }
       else if( millis() - lButStartTime > SECBUTTON*5 ) {
         #if DEBUG>0
@@ -239,7 +279,10 @@ void loop() {
         #endif
         //immettere qui il codice per richiamare un colore
         toMagenta();
-        buzzer();
+        if( iColor1 != iColor ){
+          buzzer();
+          iColor1 = iColor;
+        }
       }
       else if( millis() - lButStartTime > SECBUTTON*4 ) {
         #if DEBUG>0
@@ -249,7 +292,10 @@ void loop() {
         #endif
         //immettere qui il codice per richiamare un colore
         toYellow();
-        buzzer();
+        if( iColor1 != iColor ){
+          buzzer();
+          iColor1 = iColor;
+        }
       } 
       else if( millis() - lButStartTime > SECBUTTON*3 ) {
         #if DEBUG>0
@@ -259,7 +305,10 @@ void loop() {
         #endif
         //immettere qui il codice per richiamare un colore
         toBlue();
-        buzzer();
+        if( iColor1 != iColor ){
+          buzzer();
+          iColor1 = iColor;
+        }
       } 
       else if( millis() - lButStartTime > SECBUTTON*2 ) {
         #if DEBUG>0
@@ -269,7 +318,10 @@ void loop() {
         #endif
         //immettere qui il codice per richiamare un colore
         toGreen();
-        buzzer();
+        if( iColor1 != iColor ){
+          buzzer();
+          iColor1 = iColor;
+        }
       } 
       else if( millis() - lButStartTime > SECBUTTON ) {
         #if DEBUG>0
@@ -279,7 +331,10 @@ void loop() {
         #endif
         //immettere qui il codice per richiamare un colore
         toRed();
-        buzzer();
+        if( iColor1 != iColor ){
+          buzzer();
+          iColor1 = iColor;
+        }
       }
     } //end if state == 1
   } //end if ( iBut == HIGH ) && ( iBut1 == HIGH )
@@ -290,6 +345,10 @@ void loop() {
   //se viene aperta la porta e la luminosita' e' bassa
   if( state == 0 ) {
     toBlack();
+    if( iColor1 != iColor ){
+      buzzer();
+      iColor1 = iColor;
+    }
 
     iDistance = analogRead(SENSORIR);
 
@@ -305,10 +364,6 @@ void loop() {
 
       //se uno dei valori di iVal e' minore di MINLUM allora accendo i led
       if( ( iVal < MINLUM ) || ( iVal1 < MINLUM ) || ( iVal2 < MINLUM ) ){
-        for( i = 0; i < 10; i++){
-          buzzer();
-        }
-
         //selezioniamo un colore a caso
         i = random( 12 );
         switch (i) {
@@ -362,6 +417,11 @@ void loop() {
           break;
         }
         
+        if( iColor1 != iColor ){
+          buzzer();
+          iColor1 = iColor;
+        }
+        
         int iButTmp = 0;
         //entro nel loop finche' non sono passati tanti minuti quanti sono MINHIGH
         do
@@ -381,13 +441,6 @@ void loop() {
             #if DEBUG>0
               Serial.println( "E' stato premuto il bottore... spengo tutto" );
             #endif
-          }
-          
-          if( bHigh == false ){
-            //avvertiamo delle spegnimento con il buzzer
-            for( i = 0; i < 10; i++ ){
-              buzzer();
-            }
           }
           delay(100);
         } 
@@ -433,6 +486,8 @@ void toWhite(){
   analogWrite(GLED, 255);
   analogWrite(BLED, 255);
   
+  iColor = IWHITE;
+  
   #if DEBUG>1
     Serial.print( "Accendo tutti i led -> bianco!" );
     Serial.println( "" );
@@ -444,6 +499,8 @@ void toBlack(){
   analogWrite(RLED, 0);
   analogWrite(GLED, 0);
   analogWrite(BLED, 0);
+  
+  iColor = IBLACK;
   
   #if DEBUG>1
     Serial.print( "Spengo tutti i led -> nero" );
@@ -457,6 +514,8 @@ void toRed(){
   analogWrite(GLED, 0);
   analogWrite(BLED, 0);
   
+  iColor = IRED;
+  
   #if DEBUG>1
     Serial.print( "Coloro di rosso!" );
     Serial.println( "" );
@@ -468,6 +527,8 @@ void toGreen(){
   analogWrite(RLED, 0);
   analogWrite(GLED, 255);
   analogWrite(BLED, 0);
+  
+  iColor = IGREEN;
   
   #if DEBUG>1
     Serial.print( "Coloro di verde!" );
@@ -481,6 +542,8 @@ void toBlue(){
   analogWrite(GLED, 0);
   analogWrite(BLED, 255);
   
+  iColor = IBLUE;
+  
   #if DEBUG>1
     Serial.print( "Coloro di blu!" );
     Serial.println( "" );
@@ -492,6 +555,8 @@ void toYellow(){
   analogWrite(RLED, 255);
   analogWrite(GLED, 255);
   analogWrite(BLED, 0);
+  
+  iColor = IYELLOW;
   
   #if DEBUG>1
     Serial.print( "Coloro di giallo!" );
@@ -505,6 +570,8 @@ void toMagenta(){
   analogWrite(GLED, 0);
   analogWrite(BLED, 255);
   
+  iColor = IMAGENTA;
+  
   #if DEBUG>1
     Serial.print( "Coloro di magenta!" );
     Serial.println( "" );
@@ -516,6 +583,8 @@ void toCyan(){
   analogWrite(RLED, 0);
   analogWrite(GLED, 255);
   analogWrite(BLED, 255);
+  
+  iColor = ICYAN;
   
   #if DEBUG>1
     Serial.print( "Coloro di ciano!" );
@@ -529,6 +598,8 @@ void toGray(){
   analogWrite(GLED, 128);
   analogWrite(BLED, 128);
   
+  iColor = IGRAY;
+  
   #if DEBUG>1
     Serial.print( "Coloro di grigio!" );
     Serial.println( "" );
@@ -540,6 +611,8 @@ void toTeal(){
   analogWrite(RLED, 0);
   analogWrite(GLED, 128);
   analogWrite(BLED, 128);
+  
+  iColor = ITEAL;
   
   #if DEBUG>1
     Serial.print( "Coloro di foglia di te'(teal)!" );
@@ -553,6 +626,8 @@ void toOrange(){
   analogWrite(GLED, 127);
   analogWrite(BLED, 0);
   
+  iColor = IORANGE;
+  
   #if DEBUG>1
     Serial.print( "Coloro di arancione!" );
     Serial.println( "" );
@@ -564,6 +639,8 @@ void toOlive(){
   analogWrite(RLED, 128);
   analogWrite(GLED, 128);
   analogWrite(BLED, 0);
+  
+  iColor = IOLIVE;
   
   #if DEBUG>1
     Serial.print( "Coloro di marrone oliva!" );
@@ -577,6 +654,8 @@ void toPurple(){
   analogWrite(GLED, 0);
   analogWrite(BLED, 128);
   
+  iColor = IPURPLE;
+  
   #if DEBUG>1
     Serial.print( "Coloro di porpora!" );
     Serial.println( "" );
@@ -584,11 +663,25 @@ void toPurple(){
 }
 
 void buzzer() {
-  /*
-  digitalWrite(BUZZ, HIGH);
-  delay(10);
-  digitalWrite(BUZZ, LOW);
-  delay(10);
-  */
+  //di default ciclo di 3 con delay di 10
+  #if DEBUG>0
+    Serial.println( "Segnalazione del cambio di stato tramite buzzer (default)" );
+  #endif 
+  i = 10;
+  buzzer( &i, &i );
 }
 
+void buzzer( int *num, int *nDelay ){
+  #if DEBUG>0
+    Serial.print( "Segnalazione del cambio di stato tramite buzzer... num cicli: " );
+    Serial.print( *num );
+    Serial.print( ", delay: " );
+    Serial.println( *nDelay );
+  #endif 
+  for( int i = 0; i < *num; i++){
+    digitalWrite(BUZZ, HIGH);
+    delay( *nDelay );
+    digitalWrite(BUZZ, LOW);
+    delay( *nDelay );
+  }
+}
