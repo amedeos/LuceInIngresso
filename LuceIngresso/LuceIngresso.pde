@@ -39,7 +39,7 @@
 #include <stdio.h>
 
 //se impostata ad 1 logga sulla seriale alcune informazioni
-#define DEBUG 0
+#define DEBUG 1
 
 #define SENSORLUM 0 //fotoresistore
 #define BUTTON 12
@@ -106,11 +106,12 @@ void toOlive();
 void toPurple();
 
 //versione dell'applicativo
-char cVersion[ ] = "0.0.5";
+char cVersion[ ] = "0.0.6";
 
 //funzioni utilizzate per segnalare acusticamente un cambiamento
 void buzzer();
 void buzzer( int *num, int *nDelay );
+void notifyChangeColor( int *color1, int *color2 );
 
 //funzione utilizzata per variare il colore
 void changeColor( int *red, int *green, int *blue );
@@ -195,12 +196,9 @@ void loop() {
 
     if( state ==1 ){
       toWhite();
-      if( iColor1 != iColor ){
-        buzzer();
-        iColor1 = iColor;
-      }
+      notifyChangeColor( &iColor, &iColor1 );
     }
-  }
+  }//end if ( iBut == HIGH ) && ( iBut1 == LOW )
 
   #if DEBUG>0
     Serial.print( " Stato: " );
@@ -216,12 +214,7 @@ void loop() {
           Serial.print( SECBUTTON*11 );
           Serial.println( "ms" );
         #endif
-        //immettere qui il codice per richiamare un colore
         toPurple();
-        if( iColor1 != iColor ){
-          buzzer();
-          iColor1 = iColor;
-        }
       }
       else if( millis() - lButStartTime > SECBUTTON*10 ) {
         #if DEBUG>0
@@ -229,12 +222,7 @@ void loop() {
           Serial.print( SECBUTTON*10 );
           Serial.println( "ms" );
         #endif
-        //immettere qui il codice per richiamare un colore
         toOlive();
-        if( iColor1 != iColor ){
-          buzzer();
-          iColor1 = iColor;
-        }
       }
       else if( millis() - lButStartTime > SECBUTTON*9 ) {
         #if DEBUG>0
@@ -242,12 +230,7 @@ void loop() {
           Serial.print( SECBUTTON*9 );
           Serial.println( "ms" );
         #endif
-        //immettere qui il codice per richiamare un colore
         toOrange();
-        if( iColor1 != iColor ){
-          buzzer();
-          iColor1 = iColor;
-        }
       }
       else if( millis() - lButStartTime > SECBUTTON*8 ) {
         #if DEBUG>0
@@ -255,12 +238,7 @@ void loop() {
           Serial.print( SECBUTTON*8 );
           Serial.println( "ms" );
         #endif
-        //immettere qui il codice per richiamare un colore
         toTeal();
-        if( iColor1 != iColor ){
-          buzzer();
-          iColor1 = iColor;
-        }
       }
       else if( millis() - lButStartTime > SECBUTTON*7 ) {
         #if DEBUG>0
@@ -268,12 +246,7 @@ void loop() {
           Serial.print( SECBUTTON*7 );
           Serial.println( "ms" );
         #endif
-        //immettere qui il codice per richiamare un colore
         toGray();
-        if( iColor1 != iColor ){
-          buzzer();
-          iColor1 = iColor;
-        }
       }
       else if( millis() - lButStartTime > SECBUTTON*6 ) {
         #if DEBUG>0
@@ -281,12 +254,7 @@ void loop() {
           Serial.print( SECBUTTON*6 );
           Serial.println( "ms" );
         #endif
-        //immettere qui il codice per richiamare un colore
         toCyan();
-        if( iColor1 != iColor ){
-          buzzer();
-          iColor1 = iColor;
-        }
       }
       else if( millis() - lButStartTime > SECBUTTON*5 ) {
         #if DEBUG>0
@@ -294,12 +262,7 @@ void loop() {
           Serial.print( SECBUTTON*5 );
           Serial.println( "ms" );
         #endif
-        //immettere qui il codice per richiamare un colore
         toMagenta();
-        if( iColor1 != iColor ){
-          buzzer();
-          iColor1 = iColor;
-        }
       }
       else if( millis() - lButStartTime > SECBUTTON*4 ) {
         #if DEBUG>0
@@ -307,12 +270,7 @@ void loop() {
           Serial.print( SECBUTTON*4 );
           Serial.println( "ms" );
         #endif
-        //immettere qui il codice per richiamare un colore
         toYellow();
-        if( iColor1 != iColor ){
-          buzzer();
-          iColor1 = iColor;
-        }
       } 
       else if( millis() - lButStartTime > SECBUTTON*3 ) {
         #if DEBUG>0
@@ -320,12 +278,7 @@ void loop() {
           Serial.print( SECBUTTON*3 );
           Serial.println( "ms" );
         #endif
-        //immettere qui il codice per richiamare un colore
         toBlue();
-        if( iColor1 != iColor ){
-          buzzer();
-          iColor1 = iColor;
-        }
       } 
       else if( millis() - lButStartTime > SECBUTTON*2 ) {
         #if DEBUG>0
@@ -333,12 +286,7 @@ void loop() {
           Serial.print( SECBUTTON*2 );
           Serial.println( "ms" );
         #endif
-        //immettere qui il codice per richiamare un colore
         toGreen();
-        if( iColor1 != iColor ){
-          buzzer();
-          iColor1 = iColor;
-        }
       } 
       else if( millis() - lButStartTime > SECBUTTON ) {
         #if DEBUG>0
@@ -346,13 +294,10 @@ void loop() {
           Serial.print( SECBUTTON );
           Serial.println( "ms" );
         #endif
-        //immettere qui il codice per richiamare un colore
         toRed();
-        if( iColor1 != iColor ){
-          buzzer();
-          iColor1 = iColor;
-        }
       }
+      
+      notifyChangeColor( &iColor, &iColor1 );
     } //end if state == 1
   } //end if ( iBut == HIGH ) && ( iBut1 == HIGH )
 
@@ -362,10 +307,7 @@ void loop() {
   //se viene aperta la porta e la luminosita' e' bassa
   if( state == 0 ) {
     toBlack();
-    if( iColor1 != iColor ){
-      buzzer();
-      iColor1 = iColor;
-    }
+    notifyChangeColor( &iColor, &iColor1 );
 
     iDistance = analogRead(SENSORIR);
 
@@ -458,10 +400,7 @@ void loop() {
           break;
         }
         
-        if( iColor1 != iColor ){
-          buzzer();
-          iColor1 = iColor;
-        }
+        notifyChangeColor( &iColor, &iColor1 );
         
         int iButTmp = 0;
         //entro nel loop finche' non sono passati tanti minuti quanti sono MINHIGH
@@ -523,12 +462,6 @@ void loop() {
 
 void toWhite(){
   //accende tutti i led -> bianco
-  /*
-  analogWrite(RLED, 255);
-  analogWrite(GLED, 255);
-  analogWrite(BLED, 255);
-  */
-  
   iRed = 255;
   iGreen = 255;
   iBlue = 255; 
@@ -764,3 +697,11 @@ void buzzer( int *num, int *nDelay ){
     delay( *nDelay );
   }
 }
+
+void notifyChangeColor( int *color1, int *color2 ){
+  if( *color1 != *color2 ){
+    buzzer();
+    *color2 = *color1;
+  }
+}
+
