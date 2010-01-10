@@ -7,7 +7,6 @@
  * Semplice programma utilizzato per accendere la luce dell'ingresso
  * all'apertura della porta e con luminosita' ridotta
  *
- * Versione: 0.0.5
  */
  
 /* This program is free software; you can redistribute it and/or modify
@@ -106,6 +105,9 @@ void toOrange();
 void toOlive();
 void toPurple();
 
+//versione dell'applicativo
+char cVersion[ ] = "0.0.5";
+
 //funzioni utilizzate per segnalare acusticamente un cambiamento
 void buzzer();
 void buzzer( int *num, int *nDelay );
@@ -153,6 +155,15 @@ void setup() {
   pinMode( GLED, OUTPUT );
   pinMode( RLED, OUTPUT );
   pinMode( BLED, OUTPUT );
+  
+  Serial.print( "Application Version: " );
+  Serial.println( cVersion );
+  Serial.print( "Source File: " );
+  Serial.println( __FILE__ );
+  Serial.print( "Build date: " );
+  Serial.print( __DATE__ );
+  Serial.print( " " );
+  Serial.println( __TIME__ );
   
   randomSeed( analogRead( 1 ) );  //inizializzo il seme dei num casuali con la lettura da un pin non utilizzato
 }
