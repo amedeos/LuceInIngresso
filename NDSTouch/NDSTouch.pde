@@ -23,10 +23,37 @@
 //var used to switch between on +5v and off 0v
 #define TOUCHMARK 400
 
+//watermark var
+#define AXMIN 0
+#define AXMAX 540
+#define AYMIN 270
+#define AYMAX 350
+#define DXMIN AXMIN
+#define DXMAX AXMAX
+#define DYMIN 200
+#define DYMAX 270
+#define BXMIN 540
+#define BXMAX 640
+#define BYMIN 410
+#define BYMAX 520
+#define EXMIN BXMIN
+#define EXMAX BXMAX
+#define EYMIN 370
+#define EYMAX 410
+#define CXMIN 640
+#define CXMAX 1023
+#define CYMIN 500
+#define CYMAX 600
+#define FXMIN CXMIN
+#define FXMAX CXMAX
+#define FYMIN 460
+#define FYMAX 500
+
 //check if touched (on|off)
 int getTouch();
 int getX();
 int getY();
+char getArea(int *x, int *y);
 
 int x, y = 0;
 int iTouch = 0;
@@ -72,6 +99,24 @@ void loop(){
     Serial.println( "" );
   #endif
   
+  char cArea = '0';
+  
+  if ( iTouch ){
+    cArea = getArea( &x, &y );
+    #if DEBUG > 0
+      Serial.print( time );
+      Serial.print( " cArea: " );
+      Serial.print( cArea );
+      Serial.println( "" );
+    #endif
+    if ( cArea == 'Z' ){
+      //immettere un buzzer
+      #if DEBUG > 0
+        Serial.print( "Mancata individuazione dell'area!" );
+        Serial.println( "" );
+      #endif
+    }
+  }
   
   delay( DELAY );
 }
@@ -167,4 +212,70 @@ int getTouch(){
   }
   
   return 0;
+}
+
+char getArea(int *x, int *y){
+  /* Return A, B, C, D, E, F based on:
+   *
+   * -------------------
+   * |  A  |  B  |  C  |
+   * |-----|-----|-----|
+   * |  D  |  E  |  F  |
+   * -------------------
+   *
+   * Z if there are an error
+   */
+  //default area = Z
+  char area = 'Z';
+  
+  if ( *x >= AXMIN && *x <= AXMAX ){
+    //area A|D
+    if ( *y >= AYMIN && *y <= AYMAX ){
+      area = 'A';
+    } else if ( *y >= DYMIN && *y <= DYMAX ){
+      area = 'D';
+    } else {
+      //on this case (error mapping) set to A
+      //area = 'Z';
+      area = 'A';
+    }
+  } //end area A|D
+  else if ( *x >= BXMIN && *x <= BXMAX ){
+    //area B|E
+    if ( *y >= BYMIN && *y <= BYMAX ){
+      area = 'B';
+    } else if ( *y >= EYMIN && *y <= EYMAX ){
+      area = 'E';
+    } else {
+      //on this case (error mapping) set to B
+      //area = 'W';
+      area = 'B';
+    }
+  } //end area B|E
+  else if ( *x >= CXMIN && *x <= CXMAX ){
+    //area C|F
+    if ( *y >= CYMIN && *y <= CYMAX ){
+      area = 'C';
+    } else if ( *y >= FYMIN && *y <= FYMAX ){
+      area = 'F';
+    } else {
+      //on this case (error mapping) set to C
+      //area = 'J';
+      area = 'C';
+    }
+  } //end area C|F
+  else {
+    //on this case (error mapping) set to A
+    //area = 'K';
+    area = 'A';
+  }
+  
+  #if DEBUG > 1
+    Serial.print( "getArea: return area '" );
+    Serial.print( area );
+    Serial.print( "'" );
+    Serial.println( "" );
+  #endif
+  
+  return area;
 }
