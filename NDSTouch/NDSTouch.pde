@@ -24,29 +24,35 @@
 #define TOUCHMARK 400
 
 //watermark var
+//A
 #define AXMIN 0
-#define AXMAX 540
-#define AYMIN 270
-#define AYMAX 350
-#define DXMIN AXMIN
-#define DXMAX AXMAX
+#define AXMAX 480
+#define AYMIN 260
+#define AYMAX 360
+//D
+#define DXMIN 470
+#define DXMAX 550
 #define DYMIN 200
 #define DYMAX 270
-#define BXMIN 540
-#define BXMAX 640
+//B
+#define BXMIN 470
+#define BXMAX 600
 #define BYMIN 410
 #define BYMAX 520
-#define EXMIN BXMIN
-#define EXMAX BXMAX
+//E
+#define EXMIN 540
+#define EXMAX 650
 #define EYMIN 370
-#define EYMAX 410
-#define CXMIN 640
-#define CXMAX 1023
+#define EYMAX 415
+//C
+#define CXMIN 650
+#define CXMAX 800
 #define CYMIN 500
 #define CYMAX 600
-#define FXMIN CXMIN
-#define FXMAX CXMAX
-#define FYMIN 460
+//F
+#define FXMIN 710
+#define FXMAX 1023
+#define FYMIN 450
 #define FYMAX 500
 
 //check if touched (on|off)
@@ -228,47 +234,43 @@ char getArea(int *x, int *y){
   //default area = Z
   char area = 'Z';
   
-  if ( *x >= AXMIN && *x <= AXMAX ){
-    //area A|D
-    if ( *y >= AYMIN && *y <= AYMAX ){
+  iTmp = *y;
+  
+  do
+  {
+    if ( *x >= AXMIN && *x <= AXMAX && iTmp >= AYMIN && iTmp <= AYMAX ){
       area = 'A';
-    } else if ( *y >= DYMIN && *y <= DYMAX ){
+    } //end A
+    else if ( *x >= DXMIN && *x <= DXMAX && iTmp >= DYMIN && iTmp <= DYMAX ){
       area = 'D';
-    } else {
-      //on this case (error mapping) set to A
-      //area = 'Z';
+    } //end D
+    else if ( *x >= BXMIN && *x <= BXMAX && iTmp >= BYMIN && iTmp <= BYMAX ){
+      area = 'B';
+    } //end B
+    else if ( *x >= EXMIN && *x <= EXMAX && iTmp >= EYMIN && iTmp <= EYMAX ){
+      area = 'E';
+    } //end E
+    else if ( *x >= CXMIN && *x <= CXMAX && iTmp >= CYMIN && iTmp <= CYMAX ){
+      area = 'C';
+    } //end C
+    else if ( *x >= FXMIN && *x <= FXMAX && iTmp >= FYMIN && iTmp <= FYMAX ){
+      area = 'F';
+    } //end F
+    else {
+      //error on area decode
+      area = 'Z';
+      #if DEBUG > 0
+        Serial.print( "area Z iTmp: " );
+        Serial.print( iTmp );
+        Serial.println( "" );
+      #endif
+      iTmp = iTmp + 5;
+    }
+    if ( area != 'Z' ){
+      iTmp = 1024;
       area = 'A';
     }
-  } //end area A|D
-  else if ( *x >= BXMIN && *x <= BXMAX ){
-    //area B|E
-    if ( *y >= BYMIN && *y <= BYMAX ){
-      area = 'B';
-    } else if ( *y >= EYMIN && *y <= EYMAX ){
-      area = 'E';
-    } else {
-      //on this case (error mapping) set to B
-      //area = 'W';
-      area = 'B';
-    }
-  } //end area B|E
-  else if ( *x >= CXMIN && *x <= CXMAX ){
-    //area C|F
-    if ( *y >= CYMIN && *y <= CYMAX ){
-      area = 'C';
-    } else if ( *y >= FYMIN && *y <= FYMAX ){
-      area = 'F';
-    } else {
-      //on this case (error mapping) set to C
-      //area = 'J';
-      area = 'C';
-    }
-  } //end area C|F
-  else {
-    //on this case (error mapping) set to A
-    //area = 'K';
-    area = 'A';
-  }
+  } while ( iTmp <= 1023 );
   
   #if DEBUG > 1
     Serial.print( "getArea: return area '" );
