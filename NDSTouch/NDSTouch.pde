@@ -11,7 +11,7 @@
 #define X2 17 //analog 3
 #define Y1 18 //analog 4
 
-#define DEBUG 1
+#define DEBUG 2
 #define DEBOUNCINGDELAY 20
 #define DELAY 100
 
@@ -27,39 +27,51 @@
 //A
 #define AXMIN 0
 #define AXMAX 480
+#define AXAV 417
 #define AYMIN 260
 #define AYMAX 360
+#define AYAV 300
 //D
 #define DXMIN 470
 #define DXMAX 550
+#define DXAV 521
 #define DYMIN 200
 #define DYMAX 270
+#define DYAV 245
 //B
 #define BXMIN 470
 #define BXMAX 600
+#define BXAV 534
 #define BYMIN 410
 #define BYMAX 520
+#define BYAV 464
 //E
 #define EXMIN 540
 #define EXMAX 650
+#define EXAV 606
 #define EYMIN 370
 #define EYMAX 415
+#define EYAV 394
 //C
 #define CXMIN 650
 #define CXMAX 800
+#define CXAV 723
 #define CYMIN 500
 #define CYMAX 600
+#define CYAV 573
 //F
 #define FXMIN 710
 #define FXMAX 1023
+#define FXAV 766
 #define FYMIN 450
 #define FYMAX 500
+#define FYAV 479
 
-//check if touched (on|off)
-int getTouch();
+int getTouch(); //check if touched (on|off)
 int getX();
 int getY();
 char getArea(int *x, int *y);
+char adjustArea(int *x, int *y);
 
 int x, y = 0;
 int iTouch = 0;
@@ -115,13 +127,6 @@ void loop(){
       Serial.print( cArea );
       Serial.println( "" );
     #endif
-    if ( cArea == 'Z' ){
-      //immettere un buzzer
-      #if DEBUG > 0
-        Serial.print( "Mancata individuazione dell'area!" );
-        Serial.println( "" );
-      #endif
-    }
   }
   
   delay( DELAY );
@@ -234,48 +239,87 @@ char getArea(int *x, int *y){
   //default area = Z
   char area = 'Z';
   
-  iTmp = *y;
-  
-  do
-  {
-    if ( *x >= AXMIN && *x <= AXMAX && iTmp >= AYMIN && iTmp <= AYMAX ){
-      area = 'A';
-    } //end A
-    else if ( *x >= DXMIN && *x <= DXMAX && iTmp >= DYMIN && iTmp <= DYMAX ){
-      area = 'D';
-    } //end D
-    else if ( *x >= BXMIN && *x <= BXMAX && iTmp >= BYMIN && iTmp <= BYMAX ){
-      area = 'B';
-    } //end B
-    else if ( *x >= EXMIN && *x <= EXMAX && iTmp >= EYMIN && iTmp <= EYMAX ){
-      area = 'E';
-    } //end E
-    else if ( *x >= CXMIN && *x <= CXMAX && iTmp >= CYMIN && iTmp <= CYMAX ){
-      area = 'C';
-    } //end C
-    else if ( *x >= FXMIN && *x <= FXMAX && iTmp >= FYMIN && iTmp <= FYMAX ){
-      area = 'F';
-    } //end F
-    else {
-      //error on area decode
-      area = 'Z';
-      #if DEBUG > 0
-        Serial.print( "area Z iTmp: " );
-        Serial.print( iTmp );
-        Serial.println( "" );
-      #endif
-      iTmp = iTmp + 5;
-    }
-    if ( area != 'Z' ){
-      iTmp = 1024;
-      area = 'A';
-    }
-  } while ( iTmp <= 1023 );
+  if ( *x >= AXMIN && *x <= AXMAX && *y >= AYMIN && *y <= AYMAX ){
+    area = 'A';
+  } //end A
+  else if ( *x >= DXMIN && *x <= DXMAX && *y >= DYMIN && *y <= DYMAX ){
+    area = 'D';
+  } //end D
+  else if ( *x >= BXMIN && *x <= BXMAX && *y >= BYMIN && *y <= BYMAX ){
+    area = 'B';
+  } //end B
+  else if ( *x >= EXMIN && *x <= EXMAX && *y >= EYMIN && *y <= EYMAX ){
+    area = 'E';
+  } //end E
+  else if ( *x >= CXMIN && *x <= CXMAX && *y >= CYMIN && *y <= CYMAX ){
+    area = 'C';
+  } //end C
+  else if ( *x >= FXMIN && *x <= FXMAX && *y >= FYMIN && *y <= FYMAX ){
+    area = 'F';
+  } //end F
+  else {
+    //error on area decode
+    area = 'Z';
+  }
+  if ( area == 'Z' ){
+    area = adjustArea( &*x, &*y );
+  }
   
   #if DEBUG > 1
     Serial.print( "getArea: return area '" );
     Serial.print( area );
     Serial.print( "'" );
+    Serial.println( "" );
+  #endif
+  
+  return area;
+}
+
+char adjustArea(int *x, int *y){
+  char area = 'Z';
+  int a, b, c, d, e, f, imin = 0;
+  
+  a = abs( *x - AXAV );
+  a = a + abs( *y - AYAV );
+  b = abs( *x - BXAV );
+  b = b + abs( *y - BYAV );
+  c = abs( *x - CXAV );
+  c = c + abs( *y - CYAV );
+  d = abs( *x - DXAV );
+  d = d + abs( *y - DYAV );
+  e = abs( *x - EXAV );
+  e = e + abs( *y - EYAV );
+  f = abs( *x - FXAV );
+  f = f + abs( *y - FYAV );
+  
+  if ( a <= b ){
+    area = 'A';
+    imin = a;
+  }
+  else {
+    area = 'B';
+    imin = b;
+  }
+  if ( c <= imin ){
+    area = 'C';
+    imin = c;
+  }
+  if ( d <= imin ){
+    area = 'D';
+    imin = d;
+  }
+  if ( e <= imin ){
+    area = 'E';
+    imin = e;
+  }
+  if ( f <= imin ){
+    area = 'F';
+    imin = f;
+  }
+  
+  #if DEBUG > 1
+    Serial.print( "adjustArea: return area " );
+    Serial.print( area );
     Serial.println( "" );
   #endif
   
