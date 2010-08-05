@@ -40,8 +40,7 @@
 #include <stdio.h>
 
 //se impostata ad 1 logga sulla seriale alcune informazioni
-#define DEBUG 1
-
+#define DEBUG 2
 #define SENSORLUM 0 //fotoresistore
 //#define BUTTON 12
 #define BUZZ 9
@@ -61,7 +60,7 @@
 #if DEBUG>0
   #undef MAXDISTANCE
   #undef MINDISTANCE
-  #define MAXDISTANCE 200
+  #define MAXDISTANCE 400
   #define MINDISTANCE 0
 #endif
 
@@ -252,8 +251,11 @@ void loop() {
     Serial.print( iBut );
   #endif
 
-  if( ( iBut == HIGH ) && ( iBut1 == LOW ) ) {
+  if( ( iBut == 1 ) && ( iBut1 == 0 ) ) {
     state = 1 - state;
+    #if DEBUG>2
+      Serial.println( "Bottone da basso ad alto!" );
+    #endif
     
     x = getX();
     y = getY();
@@ -292,7 +294,7 @@ void loop() {
     Serial.println( state );
   #endif
 
-  if( ( iBut == HIGH ) && ( iBut1 == HIGH ) ) {
+  if( ( iBut == 1 ) && ( iBut1 == 1 ) ) {
 
     if( state == 1){
       //da immettere il codice di cambio colore
@@ -366,8 +368,12 @@ void loop() {
           
           //iButTmp = digitalRead( BUTTON );
           iButTmp = getTouch();
-          if( iButTmp == HIGH ) {
+          if( iButTmp == 1 ) {
             bHigh = false;
+            toBlack();
+            notifyChangeColor( &iColor, &iColor1 );
+            //delay for allow people to release touch screen
+            delay( SECBUTTON );
             
             #if DEBUG>0
               Serial.println( "E' stato premuto il bottore... spengo tutto" );
@@ -720,12 +726,14 @@ void buzzer( int *num, int *nDelay ){
     Serial.print( ", delay: " );
     Serial.println( *nDelay );
   #endif 
+  pinMode( BUZZ, OUTPUT );
   for( int i = 0; i < *num; i++){
     digitalWrite(BUZZ, HIGH);
     delay( *nDelay );
     digitalWrite(BUZZ, LOW);
     delay( *nDelay );
   }
+  pinMode( BUZZ, INPUT );
 }//end buzzer
 
 void notifyChangeColor( int *color1, int *color2 ){
@@ -755,7 +763,7 @@ int getTouch(){
   delay( DEBOUNCING );
   
   iTmp = analogRead( X1 - 14 );
-  #if DEBUG > 1
+  #if DEBUG > 2
     Serial.print( "getTouch: Read value: " );
     Serial.print( iTmp );
     Serial.println( "" );
